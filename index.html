@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doğum Günün Kutlu Olsun Hüseyin</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; background: #12002b; color: #fff; font-family: system-ui, sans-serif; }
+  /* Video görünmez, yalnızca sesi çalar */
+  #bg { position: fixed; left: 0; top: 0; width: 2px; height: 2px; opacity: 0; pointer-events: none; }
+  .shade {
+    position: fixed; inset: 0;
+    background: linear-gradient(135deg, #7b2ff7, #f107a3, #ff7a18, #7b2ff7);
+    background-size: 300% 300%;
+    animation: bgmove 12s ease infinite;
+  }
+  @keyframes bgmove { 0% {background-position: 0% 50%} 50% {background-position: 100% 50%} 100% {background-position: 0% 50%} }
+  .content { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+  .cake { font-size: 4rem; animation: bounce 1.4s ease-in-out infinite; }
+  h1 { font-size: clamp(2rem, 8vw, 4.5rem); text-shadow: 0 4px 24px rgba(0,0,0,.6); }
+  h1 span { color: #ffd54a; }
+  .note { margin-top: 20px; max-width: 520px; padding: 14px 20px; background: rgba(0,0,0,.4); border-radius: 18px; }
+  @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+  .balloon { position: fixed; bottom: -80px; animation: rise linear infinite; pointer-events: none; }
+  @keyframes rise { to { transform: translateY(-125vh); } }
+  #toggle { position: fixed; top: 14px; right: 14px; width: 48px; height: 48px; border-radius: 50%; border: 1px solid #fff8; background: #0008; color: #fff; font-size: 18px; z-index: 5; cursor: pointer; }
+  #hint { position: fixed; bottom: 10vh; left: 50%; transform: translateX(-50%); padding: 18px 44px; font-size: 1.6rem; border: 0; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,.4); border-radius: 999px; background: #ffd54a; color: #111; font-weight: 700; display: block; white-space: nowrap; z-index: 5; cursor: pointer; animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.07); } }
+</style>
+</head>
+<body>
+  <audio id="bg" src="ses.m4a" loop preload="auto"></audio>
+  <div class="shade"></div>
+  <button id="toggle">▶</button>
+  <button id="hint">🔊 Sesi Aç<small style="display:block;font-size:.8rem;font-weight:600;margin-top:4px;">Ekrana dokun</small></button>
+
+  <div class="content">
+    <div class="cake">🎂</div>
+    <h1>Doğum Günün Kutlu Olsun <span>Hüseyin!</span></h1>
+    <p class="note">Nice mutlu, sağlıklı ve eğlenceli yıllara! 🎉</p>
+  </div>
+
+<script>
+  var video = document.getElementById("bg");
+  var hint = document.getElementById("hint");
+  var toggle = document.getElementById("toggle");
+
+  // Video, yazıya dokunulunca (ya da bir tuşa basılınca) sesli başlar
+  video.muted = false;
+  video.volume = 1;
+
+  // İlk dokunuş/tıklamada sesi aç
+  var started = false;
+  function startVideo(e) {
+    if (started || (e && e.target === toggle)) return;
+    started = true;
+    video.muted = false;
+    video.volume = 1;
+    video.currentTime = 0;
+    video.play().catch(function () {});
+    hint.style.display = "none";
+  }
+  ["pointerdown", "touchstart", "keydown"].forEach(function (ev) {
+    document.addEventListener(ev, startVideo, { passive: true });
+  });
+
+  video.addEventListener("play",  function () { toggle.textContent = "❚❚"; });
+  video.addEventListener("pause", function () { toggle.textContent = "▶"; });
+
+  toggle.addEventListener("click", function () {
+    if (video.paused) video.play(); else video.pause();
+  });
+
+  var icons = ["🎈", "🎉", "🎁", "🥳", "🎊", "✨"];
+  for (var i = 0; i < 14; i++) {
+    var b = document.createElement("div");
+    b.className = "balloon";
+    b.textContent = icons[i % icons.length];
+    b.style.left = Math.random() * 92 + "vw";
+    b.style.fontSize = 30 + Math.random() * 30 + "px";
+    b.style.animationDuration = 9 + Math.random() * 9 + "s";
+    b.style.animationDelay = -Math.random() * 12 + "s";
+    document.body.appendChild(b);
+  }
+</script>
+</body>
+</html>
